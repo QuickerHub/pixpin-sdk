@@ -16,6 +16,10 @@ on:
         type: boolean
         default: false
 
+permissions:
+  contents: write
+  actions: read
+
 jobs:
   create-release:
     runs-on: ubuntu-latest
@@ -72,18 +76,16 @@ jobs:
         
     - name: Create Release
       id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ steps.version.outputs.TAG }}
-        release_name: "PixPin SDK v${{ steps.version.outputs.VERSION }}"
+        name: "PixPin SDK v${{ steps.version.outputs.VERSION }}"
         body: ${{ steps.changelog.outputs.CHANGELOG_CONTENT }}
         draft: false
         prerelease: ${{ github.event.inputs.prerelease || false }}
+        token: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Output release info
       run: |
         echo "Release created successfully!"
-        echo "Release URL: ${{ steps.create_release.outputs.html_url }}"
-        echo "Upload URL: ${{ steps.create_release.outputs.upload_url }}"
+        echo "Release URL: ${{ steps.create_release.outputs.url }}"
