@@ -367,11 +367,9 @@ PixPin .NET SDK 支持多个 .NET 版本：
 
 | 框架版本 | 状态 | 推荐场景 |
 |---------|------|----------|
-| **.NET 8.0** | ✅ 推荐 | 新项目，最佳性能 |
-| **.NET 7.0** | ⚠️ 支持 | 基本支持 |
-| **.NET 6.0** | ✅ 推荐 | LTS 版本，企业级 |
-| **.NET Standard 2.1** | ✅ 兼容 | .NET Core 3.0+ 项目 |
-| **.NET Standard 2.0** | ✅ 广泛兼容 | .NET Framework 4.6.1+ |
+| **.NET 8.0** | ✅ 推荐 | 新项目，最佳性能和功能 |
+| **.NET Standard 2.1** | ✅ 兼容 | .NET Core 3.0+, .NET 5+, .NET 6+, .NET 7+ |
+| **.NET Standard 2.0** | ✅ 广泛兼容 | .NET Framework 4.6.1+, .NET Core 2.0+ |
 
 详细的版本支持信息请查看：[.NET 版本支持文档](.NET_SUPPORT.md)
 
