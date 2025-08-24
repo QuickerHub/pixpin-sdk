@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/PixPin.Core/PixPin.Core.csproj" />
+    <Project Path="src/PixPin.Console/PixPin.Console.csproj" />
   </Folder>
 </Solution>
