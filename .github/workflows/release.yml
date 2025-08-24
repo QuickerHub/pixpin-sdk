@@ -1,0 +1,89 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.0.0)'
+        required: true
+        type: string
+      prerelease:
+        description: 'Mark as prerelease'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Determine version
+      id: version
+      run: |
+        if [[ "${{ github.event_name }}" == "push" ]]; then
+          VERSION=${GITHUB_REF#refs/tags/v}
+        else
+          VERSION="${{ github.event.inputs.version }}"
+        fi
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        echo "TAG=v$VERSION" >> $GITHUB_OUTPUT
+        
+    - name: Generate changelog
+      id: changelog
+      run: |
+        # Get the latest tag (previous release)
+        LATEST_TAG=$(git tag --sort=-version:refname | head -1)
+        if [[ -z "$LATEST_TAG" ]]; then
+          LATEST_TAG=$(git rev-list --max-parents=0 HEAD)
+        fi
+        
+        # Generate changelog
+        echo "## 🎉 What's New in v${{ steps.version.outputs.VERSION }}" > CHANGELOG.md
+        echo "" >> CHANGELOG.md
+        
+        # Get commits since last tag
+        git log $LATEST_TAG..HEAD --pretty=format:"- %s (%an)" --no-merges >> CHANGELOG.md
+        
+        # Add sections
+        echo "" >> CHANGELOG.md
+        echo "## 📦 Installation" >> CHANGELOG.md
+        echo "\`\`\`bash" >> CHANGELOG.md
+        echo "dotnet add package PixPin.Core --version ${{ steps.version.outputs.VERSION }}" >> CHANGELOG.md
+        echo "\`\`\`" >> CHANGELOG.md
+        echo "" >> CHANGELOG.md
+        echo "## 🔗 Links" >> CHANGELOG.md
+        echo "- [NuGet Package](https://www.nuget.org/packages/PixPin.Core)" >> CHANGELOG.md
+        echo "- [Documentation](https://github.com/QuickerHub/pixpin-sdk/blob/main/README.md)" >> CHANGELOG.md
+        echo "- [.NET Support Guide](https://github.com/QuickerHub/pixpin-sdk/blob/main/.NET_SUPPORT.md)" >> CHANGELOG.md
+        
+        # Output changelog content
+        echo "CHANGELOG_CONTENT<<EOF" >> $GITHUB_OUTPUT
+        cat CHANGELOG.md >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+        
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.version.outputs.TAG }}
+        release_name: "PixPin SDK v${{ steps.version.outputs.VERSION }}"
+        body: ${{ steps.changelog.outputs.CHANGELOG_CONTENT }}
+        draft: false
+        prerelease: ${{ github.event.inputs.prerelease || false }}
+        
+    - name: Output release info
+      run: |
+        echo "Release created successfully!"
+        echo "Release URL: ${{ steps.create_release.outputs.html_url }}"
+        echo "Upload URL: ${{ steps.create_release.outputs.upload_url }}"

@@ -311,6 +311,30 @@ dotnet run --project src/PixPin.Console/PixPin.Console.csproj
 
 详细使用说明请参考：[PixPin.Console/README.md](src/PixPin.Console/README.md)
 
+## 📦 NuGet 包
+
+[![NuGet](https://img.shields.io/nuget/v/PixPin.Core.svg)](https://www.nuget.org/packages/PixPin.Core)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/PixPin.Core.svg)](https://www.nuget.org/packages/PixPin.Core)
+
+### 安装方式
+
+```bash
+# .NET CLI
+dotnet add package PixPin.Core
+
+# Package Manager Console
+Install-Package PixPin.Core
+
+# PackageReference
+<PackageReference Include="PixPin.Core" Version="1.0.0" />
+```
+
+## 🔄 CI/CD 状态
+
+[![CI Build and Test](https://github.com/QuickerHub/pixpin-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/QuickerHub/pixpin-sdk/actions/workflows/ci.yml)
+[![Code Quality](https://github.com/QuickerHub/pixpin-sdk/actions/workflows/code-quality.yml/badge.svg)](https://github.com/QuickerHub/pixpin-sdk/actions/workflows/code-quality.yml)
+[![Publish to NuGet](https://github.com/QuickerHub/pixpin-sdk/actions/workflows/publish.yml/badge.svg)](https://github.com/QuickerHub/pixpin-sdk/actions/workflows/publish.yml)
+
 ## 项目结构
 
 ```

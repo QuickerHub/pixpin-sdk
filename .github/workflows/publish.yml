@@ -1,0 +1,108 @@
+name: Publish to NuGet
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Package version (e.g., 1.0.0)'
+        required: true
+        type: string
+      prerelease:
+        description: 'Is this a prerelease?'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET 8.0
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Determine version
+      id: version
+      shell: pwsh
+      run: |
+        if ("${{ github.event_name }}" -eq "release") {
+          $version = "${{ github.event.release.tag_name }}" -replace '^v', ''
+        } elseif ("${{ github.event_name }}" -eq "workflow_dispatch") {
+          $version = "${{ github.event.inputs.version }}"
+        } else {
+          $version = "1.0.0-dev.${{ github.run_number }}"
+        }
+        echo "VERSION=$version" >> $env:GITHUB_OUTPUT
+        echo "Package version: $version"
+        
+    - name: Update package version
+      shell: pwsh
+      run: |
+        $version = "${{ steps.version.outputs.VERSION }}"
+        $projectFile = "src/PixPin.Core/PixPin.Core.csproj"
+        
+        (Get-Content $projectFile) -replace '<PackageVersion>.*</PackageVersion>', "<PackageVersion>$version</PackageVersion>" | Set-Content $projectFile
+        
+        echo "Updated package version to: $version"
+        
+    - name: Build solution
+      run: dotnet build --configuration Release --no-restore
+      
+    - name: Run tests
+      run: dotnet test --configuration Release --no-build --verbosity normal
+      
+    - name: Create NuGet package
+      run: dotnet pack src/PixPin.Core/PixPin.Core.csproj --configuration Release --no-build --output ./packages
+      
+    - name: List generated packages
+      shell: pwsh
+      run: |
+        Get-ChildItem -Path "./packages" -Filter "*.nupkg" | ForEach-Object {
+          Write-Host "Generated package: $($_.Name) (Size: $($_.Length) bytes)"
+        }
+        
+    - name: Publish to NuGet
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      run: |
+        dotnet nuget push "./packages/*.nupkg" --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
+        
+    - name: Upload package artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-packages-${{ steps.version.outputs.VERSION }}
+        path: ./packages/*.nupkg
+        
+    - name: Create deployment summary
+      shell: pwsh
+      run: |
+        $version = "${{ steps.version.outputs.VERSION }}"
+        $packageName = "PixPin.Core"
+        
+        @"
+        ## 🚀 NuGet Package Published Successfully!
+        
+        **Package**: [$packageName v$version](https://www.nuget.org/packages/$packageName/$version)
+        **Release**: ${{ github.event.release.name || 'Manual Release' }}
+        **Commit**: ${{ github.sha }}
+        
+        ### 📦 Installation
+        ```bash
+        dotnet add package $packageName --version $version
+        ```
+        
+        ### 🔗 Links
+        - [NuGet Package](https://www.nuget.org/packages/$packageName)
+        - [GitHub Repository](https://github.com/QuickerHub/pixpin-sdk)
+        - [Release Notes](https://github.com/QuickerHub/pixpin-sdk/releases/tag/v$version)
+        "@ >> $env:GITHUB_STEP_SUMMARY

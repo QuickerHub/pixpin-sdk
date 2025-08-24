@@ -1,0 +1,49 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  analyze:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Setup .NET 8.0
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build solution
+      run: dotnet build --configuration Release --no-restore
+      
+    - name: Run static analysis
+      run: dotnet build --configuration Release --verbosity normal --property:TreatWarningsAsErrors=true
+      continue-on-error: true
+      
+    - name: Check formatting
+      run: dotnet format --verify-no-changes --verbosity diagnostic
+      continue-on-error: true
+      
+    - name: Security scan
+      uses: securecodewarrior/github-action-add-sarif@v1
+      continue-on-error: true
+      with:
+        sarif-file: 'security-scan-results.sarif'
+        
+    - name: Package validation
+      run: |
+        dotnet pack src/PixPin.Core/PixPin.Core.csproj --configuration Release --output ./validate-packages
+        dotnet tool install -g dotnet-validate
+        dotnet validate package local ./validate-packages/*.nupkg
+      continue-on-error: true

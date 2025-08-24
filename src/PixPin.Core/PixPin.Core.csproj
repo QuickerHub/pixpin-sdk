@@ -9,11 +9,12 @@
     <!-- Package Metadata -->
     <PackageId>PixPin.Core</PackageId>
     <PackageVersion>1.0.0</PackageVersion>
+    <PackageReleaseNotes>首个正式版本发布！支持 PixPin 截图工具的完整 .NET API，包含智能进程检测、多版本支持和性能优化。详情请查看：https://github.com/QuickerHub/pixpin-sdk/releases</PackageReleaseNotes>
     <Authors>PixPin SDK Contributors</Authors>
     <Description>PixPin .NET SDK - Provides .NET methods that generate JavaScript scripts for PixPin automation</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/your-repo/pixpin-sdk</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/your-repo/pixpin-sdk</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/QuickerHub/pixpin-sdk</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/QuickerHub/pixpin-sdk</RepositoryUrl>
     <PackageTags>pixpin;screenshot;automation;sdk</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
