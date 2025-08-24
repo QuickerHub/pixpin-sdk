@@ -1,3 +1,10 @@
+#if NETSTANDARD2_0 || NETSTANDARD2_1
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading;
+#endif
+
 using System.Diagnostics;
 using System.Text.Json;
 using PixPin.Core.Models;

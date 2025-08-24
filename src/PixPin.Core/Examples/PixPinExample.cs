@@ -1,3 +1,9 @@
+#if NETSTANDARD2_0 || NETSTANDARD2_1
+using System;
+using System.IO;
+using System.Threading;
+#endif
+
 using PixPin.Core.Enums;
 using PixPin.Core.Models;
 using PixPin.Core.Extensions;

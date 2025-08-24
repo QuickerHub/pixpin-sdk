@@ -1,3 +1,7 @@
+#if NETSTANDARD2_0 || NETSTANDARD2_1
+using System.Threading;
+#endif
+
 using PixPin.Core.Enums;
 using PixPin.Core.Models;
 
@@ -82,7 +86,7 @@ public static class PixPinExtensions
     {
         if (!string.IsNullOrEmpty(savePath))
         {
-            pixpin.SaveAllPinImageTo(savePath);
+            pixpin.SaveAllPinImageTo(savePath!);
         }
         else
         {

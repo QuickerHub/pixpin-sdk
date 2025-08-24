@@ -99,7 +99,10 @@
    - 下载地址：https://pixpin.cn/
    - 建议使用最新版本
 
-2. **.NET 8.0 SDK** - 必须已安装
+2. **.NET SDK** - 需要安装以下任一版本：
+   - **.NET 8.0 SDK** (推荐) - 最新 LTS 版本
+   - **.NET 7.0 SDK** - 基本支持
+   - **.NET 6.0 SDK** - 稳定 LTS 版本
    - 下载地址：https://dotnet.microsoft.com/download
 
 ### PixPin 自动检测

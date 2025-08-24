@@ -1,4 +1,11 @@
-﻿namespace PixPin.Core;
+﻿#if NETSTANDARD2_0 || NETSTANDARD2_1
+using System;
+#endif
+
+using PixPin.Core.Enums;
+using PixPin.Core.Models;
+
+namespace PixPin.Core;
 
 /// <summary>
 /// PixPin .NET SDK - Provides .NET methods that generate JavaScript scripts for PixPin automation
