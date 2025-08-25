@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2022
     
     strategy:
       matrix:
@@ -41,7 +41,7 @@ jobs:
           src/PixPin.Console/bin/Release/
 
   package:
-    runs-on: windows-latest
+    runs-on: windows-2022
     needs: build
     if: github.ref == 'refs/heads/main'
     
