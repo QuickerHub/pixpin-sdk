@@ -76,10 +76,15 @@ jobs:
         }
         
     - name: Publish to NuGet
+      shell: pwsh
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
       run: |
-        dotnet nuget push "./packages/*.nupkg" --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
+        $packages = Get-ChildItem -Path "./packages" -Filter "*.nupkg"
+        foreach ($package in $packages) {
+          Write-Host "Publishing package: $($package.Name)"
+          dotnet nuget push $package.FullName --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
+        }
         
     - name: Upload package artifacts
       uses: actions/upload-artifact@v4
